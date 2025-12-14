@@ -1,4 +1,4 @@
-# nearkpss
+
 
 ## Modified KPSS Tests for Near Integration
 
@@ -396,3 +396,5 @@ And the original paper:
 - Müller, U. (2005). Size and power of tests for stationarity in highly autocorrelated time series. *Journal of Econometrics*, 128, 195-213.
 - Newey, W. & West, K. (1994). Automatic lag selection in covariance matrix estimation. *Review of Economic Studies*, 61, 631-653.
 - Sul, D., Phillips, P.C.B., & Choi, C. (2005). Prewhitening bias in HAC estimation. *Oxford Bulletin of Economics and Statistics*, 67, 517-546.
+=======
+
