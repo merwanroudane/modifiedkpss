@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nearkpss - Modified KPSS Test for Near Integration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <style>
+        :root {
+            --primary: #0066cc;
+            --primary-light: #e6f0fa;
+            --primary-dark: #004999;
+            --secondary: #00a67d;
+            --secondary-light: #e6f7f3;
+            --accent: #ff6b35;
+            --accent-light: #fff0eb;
+            --warning: #f5a623;
+            --warning-light: #fef6e6;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a68;
+            --text-muted: #6b6b8a;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fc;
+            --bg-tertiary: #f0f2f8;
+            --border: #e2e4e9;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+        }
+
+        .navbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 10rem 2rem 5rem;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero-buttons .btn {
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+        }
+
+        .install-box {
+            background: var(--text-primary);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+        }
+
+        .install-box code {
+            color: #7dd3fc;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+            padding: 3rem 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding-left: 0.75rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-secondary);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .sidebar-nav .icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        /* Content */
+        .content {
+            min-width: 0;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 100px;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section h2 .icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .section h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 2.5rem 0 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .card-icon.primary { background: var(--primary-light); color: var(--primary); }
+        .card-icon.secondary { background: var(--secondary-light); color: var(--secondary); }
+        .card-icon.accent { background: var(--accent-light); color: var(--accent); }
+        .card-icon.warning { background: var(--warning-light); color: var(--warning); }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-card h4 {
+            margin: 0 0 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .feature-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #1e293b;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem;
+            position: relative;
+        }
+
+        pre code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f172a;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .code-header + pre {
+            margin-top: 0;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-tertiary);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--primary-dark);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--bg-secondary);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .alert-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-info {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .alert-success {
+            background: var(--secondary-light);
+            border-left: 4px solid var(--secondary);
+            color: #006b4f;
+        }
+
+        .alert-warning {
+            background: var(--warning-light);
+            border-left: 4px solid var(--warning);
+            color: #8b5a00;
+        }
+
+        .alert-danger {
+            background: #fee;
+            border-left: 4px solid #dc3545;
+            color: #8b0000;
+        }
+
+        /* Infographic */
+        .infographic-container {
+            margin: 2rem 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .infographic-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Math */
+        .math-block {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            text-align: center;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1rem;
+            border: 1px solid var(--border);
+        }
+
+        .math-inline {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        /* Output Box */
+        .output-box {
+            background: #fafbfc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 1rem 0 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Parameters Table */
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 1rem 0 1.5rem;
+        }
+
+        .param-table th {
+            text-align: left;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .param-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .param-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .param-type {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Interpretation Guide */
+        .interpretation-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .interpretation-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .interpretation-card.reject {
+            border-left: 4px solid var(--accent);
+        }
+
+        .interpretation-card.no-reject {
+            border-left: 4px solid var(--secondary);
+        }
+
+        .interpretation-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .interpretation-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .reject .interpretation-icon {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .no-reject .interpretation-icon {
+            background: var(--secondary-light);
+            color: var(--secondary);
+        }
+
+        .interpretation-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .interpretation-card ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .interpretation-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-copy {
+            width: 100%;
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Syntax Highlighting Overrides */
+        .hljs-keyword { color: #f472b6; }
+        .hljs-string { color: #a5d6ff; }
+        .hljs-number { color: #79c0ff; }
+        .hljs-function { color: #d2a8ff; }
+        .hljs-title { color: #d2a8ff; }
+        .hljs-params { color: #e2e8f0; }
+        .hljs-comment { color: #8b949e; }
+        .hljs-built_in { color: #79c0ff; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon">📊</div>
+                nearkpss
+            </a>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#quickstart">Quick Start</a></li>
+                <li><a href="#api">API Reference</a></li>
+                <li><a href="#examples">Examples</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="https://pypi.org/project/nearkpss/" class="btn btn-outline" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    PyPI
+                </a>
+                <a href="https://github.com/merwanroudane/modifiedkpss" class="btn btn-primary" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <span class="hero-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Python Econometrics Package
+        </span>
+        <h1>Modified KPSS Test<br>for Near Integration</h1>
+        <p class="hero-subtitle">
+            A robust Python implementation of the Harris, Leybourne & McCabe (2007) modified KPSS test 
+            that provides controlled asymptotic size for near-integrated time series.
+        </p>
+        <div class="hero-buttons">
+            <a href="#quickstart" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Get Started
+            </a>
+            <a href="#examples" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                View Examples
+            </a>
+        </div>
+        <div class="install-box">
+            <span>$</span>
+            <code>pip install nearkpss</code>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('pip install nearkpss')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Getting Started</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#quickstart">Quick Start</a></li>
+                    <li><a href="#theory">Theoretical Background</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">API Reference</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#modified-kpss-class">ModifiedKPSS Class</a></li>
+                    <li><a href="#modified-kpss-test">modified_kpss_test()</a></li>
+                    <li><a href="#standard-kpss-test">standard_kpss_test()</a></li>
+                    <li><a href="#utility-functions">Utility Functions</a></li>
+                    <li><a href="#critical-values">Critical Values</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Examples</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#example-basic">Basic Usage</a></li>
+                    <li><a href="#example-real-data">Real Economic Data</a></li>
+                    <li><a href="#example-comparison">Comparing Tests</a></li>
+                    <li><a href="#example-simulation">Monte Carlo Simulation</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Guides</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#interpretation">Interpretation Guide</a></li>
+                    <li><a href="#best-practices">Best Practices</a></li>
+                    <li><a href="#citation">Citation</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- Overview Section -->
+            <section id="overview" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📖</span>
+                        Overview
+                    </h2>
+                    <p>Understanding the Modified KPSS Test for Near Integration</p>
+                </div>
+
+                <div class="infographic-container">
+                    <img src="infographic.png" alt="Modified KPSS Test Infographic">
+                </div>
+
+                <h3>The Problem with Standard KPSS</h3>
+                <p>
+                    The standard KPSS test (Kwiatkowski, Phillips, Schmidt, and Shin, 1992) is widely used to test 
+                    for stationarity. However, it suffers from <strong>severe size distortions</strong> when the 
+                    data generating process is <strong>near-integrated</strong> rather than purely stationary or 
+                    having a unit root.
+                </p>
+                
+                <p>
+                    A near-integrated process follows: <code>y<sub>t</sub> = ρ<sub>c,T</sub> · y<sub>t-1</sub> + v<sub>t</sub></code> 
+                    where <code>ρ<sub>c,T</sub> = 1 - c/T</code> for some constant <code>c > 0</code>. As the sample 
+                    size T grows, ρ approaches 1, making the process "close to" a unit root but technically stationary.
+                </p>
+
+                <div class="alert alert-warning">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Size Distortion Problem</div>
+                        As shown in the infographic, the standard KPSS test incorrectly rejects the null hypothesis 
+                        with asymptotic size approaching 1 (unity) for near-integrated series, making it unreliable 
+                        for testing stationarity in macroeconomic data where near-integration is common.
+                    </div>
+                </div>
+
+                <h3>The Solution: Modified KPSS Test</h3>
+                <p>
+                    Harris, Leybourne & McCabe (2007) proposed a modified version that applies the KPSS test to a 
+                    <strong>filtered series</strong> that removes the near unit root under the null hypothesis:
+                </p>
+
+                <div class="math-block">
+                    Filtered series: w̃<sub>t</sub> = w<sub>t</sub> - (1 - c̄/T) · w<sub>t-1</sub>
+                </div>
+
+                <p>
+                    This transformation results in a test with <strong>controlled asymptotic size</strong>, making 
+                    it suitable for distinguishing between near-integrated and unit root processes.
+                </p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="card-icon primary">🎯</div>
+                        <h4>Controlled Size</h4>
+                        <p>Maintains nominal size even for near-integrated processes (c > 0)</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="card-icon secondary">📊</div>
+                        <h4>Robust to Initial Values</h4>
+                        <p>Unlike standard KPSS, not sensitive to the series' initial value (α)</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="card-icon accent">⚡</div>
+                        <h4>Better Finite-Sample</h4>
+                        <p>Superior finite-sample size properties compared to alternatives</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="card-icon warning">🔬</div>
+                        <h4>Publication Ready</h4>
+                        <p>Formatted output suitable for academic research papers</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation Section -->
+            <section id="installation" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📦</span>
+                        Installation
+                    </h2>
+                    <p>Get started with nearkpss in seconds</p>
+                </div>
+
+                <h3>Using pip (Recommended)</h3>
+                <div class="code-header">
+                    <span>Terminal</span>
+                </div>
+                <pre><code class="language-bash">pip install nearkpss</code></pre>
+
+                <h3>From Source</h3>
+                <div class="code-header">
+                    <span>Terminal</span>
+                </div>
+                <pre><code class="language-bash">git clone https://github.com/merwanroudane/modifiedkpss.git
+cd modifiedkpss
+pip install -e .</code></pre>
+
+                <h3>Dependencies</h3>
+                <p>The package requires:</p>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Package</th>
+                                <th>Version</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>numpy</code></td>
+                                <td>≥1.20.0</td>
+                                <td>Numerical computations</td>
+                            </tr>
+                            <tr>
+                                <td><code>scipy</code></td>
+                                <td>≥1.7.0</td>
+                                <td>Statistical functions (optional)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Quick Start Section -->
+            <section id="quickstart" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">🚀</span>
+                        Quick Start
+                    </h2>
+                    <p>Run your first Modified KPSS test in minutes</p>
+                </div>
+
+                <h3>Basic Usage</h3>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+from nearkpss import modified_kpss_test, standard_kpss_test
+
+# Generate sample data: near-integrated process
+np.random.seed(42)
+T = 200
+c = 10  # Local-to-unity parameter
+rho = 1 - c / T
+y = np.zeros(T)
+for t in range(1, T):
+    y[t] = rho * y[t-1] + np.random.normal()
+
+# Run the Modified KPSS test
+result = modified_kpss_test(y, c_bar=10, detrend="c")
+print(result)</code></pre>
+
+                <h4>Output</h4>
+                <div class="output-box">============================================================
+        Modified KPSS Test for Near Integration
+        Harris, Leybourne, and McCabe (2007)
+============================================================
+
+Null Hypothesis: The series is near-integrated (stationary)
+                 H₀: c ≥ c̄ = 10.0
+Alternative:     The series has a unit root (H₁: c = 0)
+
+Detrending:      Level (constant only)
+Observations:    200
+
+------------------------------------------------------------
+Test Statistic:  0.142856 
+P-value:         0.2340
+------------------------------------------------------------
+
+Critical Values:
+  1%:   0.7390
+  5%:   0.4630
+  10%:  0.3470
+
+Estimation Details:
+  Bandwidth:           4.52
+  Long-run variance:   1.023456
+
+============================================================
+Conclusion: Cannot reject H₀.
+           Series appears near-integrated/stationary.
+============================================================
+
+Significance codes: *** 1%  ** 5%  * 10%</div>
+            </section>
+
+            <!-- Theory Section -->
+            <section id="theory" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📐</span>
+                        Theoretical Background
+                    </h2>
+                    <p>Understanding the econometric foundation</p>
+                </div>
+
+                <h3>The Data Generating Process</h3>
+                <p>The modified KPSS test is designed for the following near-integrated DGP:</p>
+                
+                <div class="math-block">
+                    y<sub>t</sub> = μ + w<sub>t</sub>, &nbsp;&nbsp; t = 1, ..., T<br><br>
+                    w<sub>t</sub> = ρ<sub>c,T</sub> · w<sub>t-1</sub> + v<sub>t</sub>, &nbsp;&nbsp; t = 2, ..., T<br><br>
+                    ρ<sub>c,T</sub> = 1 - c/T
+                </div>
+
+                <p>Where:</p>
+                <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                    <li><strong>μ</strong> is the mean/intercept</li>
+                    <li><strong>c</strong> is the local-to-unity parameter (c = 0 implies unit root, c > 0 implies stationarity)</li>
+                    <li><strong>v<sub>t</sub></strong> are innovations satisfying standard regularity conditions</li>
+                </ul>
+
+                <h3>Hypothesis Testing</h3>
+                <div class="interpretation-box">
+                    <div class="interpretation-card no-reject">
+                        <div class="interpretation-header">
+                            <div class="interpretation-icon">H₀</div>
+                            <div class="interpretation-title">Null Hypothesis</div>
+                        </div>
+                        <p>The series is near-integrated (stationary):<br>
+                        <strong>H₀: c ≥ c̄ > 0</strong></p>
+                    </div>
+                    <div class="interpretation-card reject">
+                        <div class="interpretation-header">
+                            <div class="interpretation-icon">H₁</div>
+                            <div class="interpretation-title">Alternative Hypothesis</div>
+                        </div>
+                        <p>The series has a unit root:<br>
+                        <strong>H₁: c = 0</strong></p>
+                    </div>
+                </div>
+
+                <h3>The Test Statistic</h3>
+                <p>The modified KPSS statistic is computed as:</p>
+                
+                <div class="math-block">
+                    S<sup>μ</sup>(c̄) = T<sup>-2</sup> · Σ<sub>t=2</sub><sup>T</sup> S<sub>t</sub><sup>2</sup> / ω̂<sub>c̄</sub><sup>2</sup>
+                </div>
+
+                <p>Where:</p>
+                <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                    <li><strong>S<sub>t</sub></strong> = Σ<sub>i=2</sub><sup>t</sup> r<sub>c̄,i</sub> are partial sums of residuals</li>
+                    <li><strong>r<sub>c̄,t</sub></strong> = (y<sub>t</sub> - ρ<sub>c̄,T</sub>·y<sub>t-1</sub>) - m̂<sub>c̄</sub> are OLS residuals from filtered data</li>
+                    <li><strong>ω̂<sub>c̄</sub><sup>2</sup></strong> is the long-run variance estimator</li>
+                </ul>
+
+                <h3>Critical Values</h3>
+                <p>At the boundary c = c̄, the asymptotic distribution reduces to the standard KPSS distribution:</p>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Detrending</th>
+                                <th>1%</th>
+                                <th>5%</th>
+                                <th>10%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Level (constant only)</td>
+                                <td>0.739</td>
+                                <td>0.463</td>
+                                <td>0.347</td>
+                            </tr>
+                            <tr>
+                                <td>Trend (constant + trend)</td>
+                                <td>0.216</td>
+                                <td>0.146</td>
+                                <td>0.119</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- API Reference: ModifiedKPSS Class -->
+            <section id="modified-kpss-class" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">⚙️</span>
+                        API Reference
+                    </h2>
+                    <p>Complete documentation of all functions and classes</p>
+                </div>
+
+                <h3>ModifiedKPSS Class</h3>
+                <p>The main class for performing the Modified KPSS test.</p>
+
+                <div class="code-header">
+                    <span>Class Signature</span>
+                </div>
+                <pre><code class="language-python">class ModifiedKPSS(
+    c_bar: float = 10.0,
+    detrend: str = "c",
+    kernel: str = "qs",
+    bandwidth: Optional[float] = None
+)</code></pre>
+
+                <h4>Parameters</h4>
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="param-name">c_bar</span></td>
+                            <td><span class="param-type">float</span></td>
+                            <td>10.0</td>
+                            <td>The hypothesized local-to-unity parameter under H₀. Following the paper, c̄ = 10 is recommended.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">detrend</span></td>
+                            <td><span class="param-type">str</span></td>
+                            <td>"c"</td>
+                            <td>Detrending specification: <code>"c"</code> for level (constant only) or <code>"ct"</code> for trend (constant + linear trend).</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">kernel</span></td>
+                            <td><span class="param-type">str</span></td>
+                            <td>"qs"</td>
+                            <td>Kernel for long-run variance: <code>"qs"</code> (Quadratic Spectral), <code>"bartlett"</code>, <code>"parzen"</code>, <code>"truncated"</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">bandwidth</span></td>
+                            <td><span class="param-type">float | None</span></td>
+                            <td>None</td>
+                            <td>Bandwidth for long-run variance. If None, uses Newey-West (1994) automatic selection.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Methods</h4>
+                
+                <h5><code>.test(y, compute_pvalue=True, pvalue_replications=10000)</code></h5>
+                <p>Perform the Modified KPSS test on the data.</p>
+
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="param-name">y</span></td>
+                            <td><span class="param-type">np.ndarray</span></td>
+                            <td>The time series data to test (1D array)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">compute_pvalue</span></td>
+                            <td><span class="param-type">bool</span></td>
+                            <td>Whether to compute p-value via simulation (default: True)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">pvalue_replications</span></td>
+                            <td><span class="param-type">int</span></td>
+                            <td>Number of Monte Carlo replications for p-value (default: 10000)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Returns:</strong> <code>ModifiedKPSSResult</code> object containing all test results.</p>
+
+                <h4>Example</h4>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">from nearkpss import ModifiedKPSS
+import numpy as np
+
+# Initialize the test
+mkpss = ModifiedKPSS(c_bar=10, detrend="c", kernel="qs")
+
+# Generate data
+np.random.seed(42)
+y = np.cumsum(np.random.normal(size=200))
+
+# Run test
+result = mkpss.test(y)
+
+# Access results
+print(f"Statistic: {result.statistic:.4f}")
+print(f"P-value: {result.p_value:.4f}")
+print(f"Reject at 5%: {result.reject_5pct}")</code></pre>
+            </section>
+
+            <!-- API Reference: modified_kpss_test -->
+            <section id="modified-kpss-test" class="section">
+                <h3>modified_kpss_test() Function</h3>
+                <p>Convenience function wrapper for the ModifiedKPSS class.</p>
+
+                <div class="code-header">
+                    <span>Function Signature</span>
+                </div>
+                <pre><code class="language-python">def modified_kpss_test(
+    y: np.ndarray,
+    c_bar: float = 10.0,
+    detrend: str = "c",
+    kernel: str = "qs",
+    bandwidth: Optional[float] = None,
+    compute_pvalue: bool = True
+) -> ModifiedKPSSResult</code></pre>
+
+                <h4>Example</h4>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">from nearkpss import modified_kpss_test
+import numpy as np
+
+# Simple one-liner usage
+y = np.cumsum(np.random.normal(size=200))
+result = modified_kpss_test(y, c_bar=10)
+print(result)</code></pre>
+            </section>
+
+            <!-- API Reference: standard_kpss_test -->
+            <section id="standard-kpss-test" class="section">
+                <h3>standard_kpss_test() Function</h3>
+                <p>Standard KPSS test for comparison purposes.</p>
+
+                <div class="code-header">
+                    <span>Function Signature</span>
+                </div>
+                <pre><code class="language-python">def standard_kpss_test(
+    y: np.ndarray,
+    detrend: str = "c",
+    kernel: str = "qs",
+    bandwidth: Optional[float] = None
+) -> StandardKPSSResult</code></pre>
+
+                <div class="alert alert-info">
+                    <div class="alert-icon">ℹ️</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Note</div>
+                        The standard KPSS test is provided for comparison. Remember that it may have size 
+                        distortion issues with near-integrated data. Use the Modified KPSS test for 
+                        more reliable inference.
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Reference: Utility Functions -->
+            <section id="utility-functions" class="section">
+                <h3>Utility Functions</h3>
+                <p>Helper functions for advanced usage and custom implementations.</p>
+
+                <h4>gls_transform()</h4>
+                <p>Apply GLS-type quasi-differencing transformation to the data.</p>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">from nearkpss import gls_transform
+import numpy as np
+
+y = np.array([1.0, 2.1, 3.5, 4.2, 5.8])
+y_transformed = gls_transform(y, c_bar=10)
+# Returns: y[t] - (1 - c_bar/T) * y[t-1] for t = 2, ..., T</code></pre>
+
+                <h4>long_run_variance()</h4>
+                <p>Estimate long-run variance using kernel-based HAC estimator.</p>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">from nearkpss import long_run_variance, newey_west_bandwidth
+import numpy as np
+
+residuals = np.random.normal(size=200)
+
+# Automatic bandwidth
+lrv = long_run_variance(residuals, kernel="qs")
+
+# Manual bandwidth
+bw = newey_west_bandwidth(residuals, kernel="qs")
+lrv = long_run_variance(residuals, kernel="qs", bandwidth=bw)</code></pre>
+
+                <h4>Available Kernel Functions</h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kernel</th>
+                                <th>Code</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Quadratic Spectral</td>
+                                <td><code>"qs"</code></td>
+                                <td>Recommended (used in the paper)</td>
+                            </tr>
+                            <tr>
+                                <td>Bartlett</td>
+                                <td><code>"bartlett"</code></td>
+                                <td>Triangular kernel</td>
+                            </tr>
+                            <tr>
+                                <td>Parzen</td>
+                                <td><code>"parzen"</code></td>
+                                <td>Higher-order kernel</td>
+                            </tr>
+                            <tr>
+                                <td>Truncated</td>
+                                <td><code>"truncated"</code></td>
+                                <td>Rectangular kernel</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- API Reference: Critical Values -->
+            <section id="critical-values" class="section">
+                <h3>Critical Values Functions</h3>
+                
+                <h4>get_critical_values()</h4>
+                <p>Get pre-computed or simulated critical values.</p>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">from nearkpss import get_critical_values
+
+# Get standard critical values
+cv = get_critical_values(c_bar=10, detrend="c")
+print(cv)
+# CriticalValues(c̄=10.0, detrend='c')
+#   1%:  0.7390
+#   5%:  0.4630
+#   10%: 0.3470
+
+# Simulate custom critical values
+cv_sim = get_critical_values(
+    c_bar=15, 
+    detrend="c", 
+    use_simulation=True,
+    n_replications=50000
+)</code></pre>
+
+                <h4>simulate_critical_values()</h4>
+                <p>Simulate the asymptotic distribution from Theorem 1.</p>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">from nearkpss import simulate_critical_values
+import numpy as np
+
+# Simulate distribution
+stats = simulate_critical_values(
+    c=10,          # True c value
+    c_bar=10,      # Hypothesized c_bar
+    alpha=1.0,     # Initial value parameter
+    detrend="c",
+    n_replications=10000,
+    n_steps=5000,
+    seed=42
+)
+
+# Get custom critical values
+cv_1pct = np.percentile(stats, 99)
+cv_5pct = np.percentile(stats, 95)
+cv_10pct = np.percentile(stats, 90)</code></pre>
+            </section>
+
+            <!-- Examples: Basic Usage -->
+            <section id="example-basic" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">💡</span>
+                        Examples
+                    </h2>
+                    <p>Practical examples for researchers</p>
+                </div>
+
+                <h3>Basic Usage</h3>
+                <p>Test a simulated near-integrated series:</p>
+
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+from nearkpss import modified_kpss_test
+
+# Simulate near-integrated process with c = 10
+np.random.seed(42)
+T = 200
+c = 10
+rho = 1 - c / T
+
+# Generate process: y_t = rho * y_{t-1} + e_t
+y = np.zeros(T)
+for t in range(1, T):
+    y[t] = rho * y[t-1] + np.random.normal()
+
+# Test 1: Level stationarity
+result_level = modified_kpss_test(y, c_bar=10, detrend="c")
+print("Level Stationarity Test:")
+print(result_level)
+
+# Test 2: Trend stationarity
+result_trend = modified_kpss_test(y, c_bar=10, detrend="ct")
+print("\nTrend Stationarity Test:")
+print(result_trend)</code></pre>
+            </section>
+
+            <!-- Examples: Real Economic Data -->
+            <section id="example-real-data" class="section">
+                <h3>Real Economic Data Example</h3>
+                <p>Testing macroeconomic variables using the Modified KPSS test with actual data from Algeria (1990-2021):</p>
+
+                <div class="alert alert-info">
+                    <div class="alert-icon">📊</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Dataset Description</div>
+                        <p>The example uses Algerian macroeconomic data with the following variables:</p>
+                        <ul style="margin-top: 0.5rem;">
+                            <li><strong>ex</strong>: Exchange rate (DZD/USD)</li>
+                            <li><strong>inf</strong>: Inflation rate (%)</li>
+                            <li><strong>bp</strong>: Balance of payments</li>
+                            <li><strong>rg</strong>: Real GDP growth</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">import pandas as pd
+import numpy as np
+from nearkpss import modified_kpss_test, standard_kpss_test
+
+# Load macroeconomic data
+data = pd.read_excel("ex.xlsx")
+print(f"Dataset: {len(data)} observations (1990-2021)")
+print(f"Variables: {data.columns.tolist()}")
+
+# Variables to test
+variables = ['ex', 'inf', 'bp', 'rg']
+
+# ============================================
+# Test 1: Exchange Rate (ex)
+# ============================================
+print("\n" + "="*60)
+print("Testing Exchange Rate (ex)")
+print("="*60)
+
+ex = data['ex'].values
+
+# Modified KPSS test (robust to near-integration)
+result_mkpss = modified_kpss_test(ex, c_bar=10, detrend="c")
+print(result_mkpss)
+
+# Compare with standard KPSS
+result_kpss = standard_kpss_test(ex, detrend="c")
+print(result_kpss)
+
+# ============================================
+# Test 2: Inflation Rate (inf)
+# ============================================
+print("\n" + "="*60)
+print("Testing Inflation Rate (inf)")
+print("="*60)
+
+inf = data['inf'].values
+result = modified_kpss_test(inf, c_bar=10, detrend="c")
+print(result)
+
+# ============================================
+# Test 3: Balance of Payments (bp)
+# ============================================
+print("\n" + "="*60)
+print("Testing Balance of Payments (bp)")
+print("="*60)
+
+bp = data['bp'].values
+result = modified_kpss_test(bp, c_bar=10, detrend="c")
+print(result)
+
+# ============================================
+# Test 4: Real GDP Growth (rg)
+# ============================================
+print("\n" + "="*60)
+print("Testing Real GDP Growth (rg)")
+print("="*60)
+
+rg = data['rg'].values
+result = modified_kpss_test(rg, c_bar=10, detrend="c")
+print(result)</code></pre>
+
+                <h4>Summary Table Function</h4>
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">def create_summary_table(data, variables, c_bar=10, detrend="c"):
+    """
+    Create a publication-ready summary table of Modified KPSS tests.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        DataFrame containing the variables
+    variables : list
+        List of column names to test
+    c_bar : float
+        Local-to-unity parameter
+    detrend : str
+        Detrending specification
+        
+    Returns
+    -------
+    pd.DataFrame
+        Summary table with test results
+    """
+    results = []
+    
+    for var in variables:
+        y = data[var].dropna().values
+        
+        # Run modified KPSS test
+        mkpss_result = modified_kpss_test(y, c_bar=c_bar, detrend=detrend)
+        
+        # Determine significance level
+        if mkpss_result.reject_1pct:
+            sig = "***"
+            decision = "Reject H₀"
+        elif mkpss_result.reject_5pct:
+            sig = "**"
+            decision = "Reject H₀"
+        elif mkpss_result.reject_10pct:
+            sig = "*"
+            decision = "Reject H₀"
+        else:
+            sig = ""
+            decision = "Cannot Reject"
+        
+        results.append({
+            'Variable': var,
+            'Statistic': f"{mkpss_result.statistic:.4f}{sig}",
+            'P-value': f"{mkpss_result.p_value:.4f}",
+            'CV (5%)': f"{mkpss_result.critical_values.cv_5pct:.4f}",
+            'Bandwidth': f"{mkpss_result.bandwidth:.2f}",
+            'Decision': decision
+        })
+    
+    return pd.DataFrame(results)
+
+# Create summary table
+summary = create_summary_table(data, ['ex', 'inf', 'bp', 'rg'])
+print("\n" + "="*80)
+print("Modified KPSS Test Results Summary")
+print("="*80)
+print(summary.to_string(index=False))
+print("\nNotes: *** p<0.01, ** p<0.05, * p<0.10")
+print("H₀: Series is near-integrated (stationary)")
+print("H₁: Series has a unit root")</code></pre>
+            </section>
+
+            <!-- Examples: Comparison -->
+            <section id="example-comparison" class="section">
+                <h3>Comparing Standard vs Modified KPSS</h3>
+                <p>Demonstrating the size distortion problem of the standard KPSS test:</p>
+
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+from nearkpss import modified_kpss_test, standard_kpss_test
+
+def compare_tests(y, name="Series"):
+    """Compare standard and modified KPSS tests."""
+    
+    print(f"\n{'='*70}")
+    print(f"Comparison for: {name}")
+    print(f"{'='*70}")
+    
+    # Standard KPSS
+    std_result = standard_kpss_test(y, detrend="c")
+    
+    # Modified KPSS
+    mod_result = modified_kpss_test(y, c_bar=10, detrend="c")
+    
+    print(f"\n{'Test':<20} {'Statistic':>12} {'CV (5%)':>12} {'Decision':>15}")
+    print("-" * 60)
+    
+    # Standard KPSS result
+    std_reject = std_result.statistic > std_result.critical_values[5]
+    std_decision = "Reject H₀" if std_reject else "Cannot Reject"
+    print(f"{'Standard KPSS':<20} {std_result.statistic:>12.4f} "
+          f"{std_result.critical_values[5]:>12.4f} {std_decision:>15}")
+    
+    # Modified KPSS result
+    mod_decision = "Reject H₀" if mod_result.reject_5pct else "Cannot Reject"
+    print(f"{'Modified KPSS':<20} {mod_result.statistic:>12.4f} "
+          f"{mod_result.critical_values.cv_5pct:>12.4f} {mod_decision:>15}")
+    
+    return std_result, mod_result
+
+# Example 1: Near-integrated process (stationary but close to unit root)
+np.random.seed(42)
+T = 200
+c = 10  # Near-integrated
+rho = 1 - c/T
+
+y_near = np.zeros(T)
+for t in range(1, T):
+    y_near[t] = rho * y_near[t-1] + np.random.normal()
+
+compare_tests(y_near, "Near-Integrated (c=10)")
+
+# Example 2: Pure random walk (unit root)
+y_rw = np.cumsum(np.random.normal(size=T))
+compare_tests(y_rw, "Random Walk (c=0)")
+
+# Example 3: Stationary AR(1)
+rho_stat = 0.8
+y_stat = np.zeros(T)
+for t in range(1, T):
+    y_stat[t] = rho_stat * y_stat[t-1] + np.random.normal()
+compare_tests(y_stat, "Stationary AR(1) (ρ=0.8)")</code></pre>
+            </section>
+
+            <!-- Examples: Simulation -->
+            <section id="example-simulation" class="section">
+                <h3>Monte Carlo Size Simulation</h3>
+                <p>Replicate the finite-sample size analysis from Table 1 of the paper:</p>
+
+                <div class="code-header">
+                    <span>Python</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+from nearkpss import modified_kpss_test, standard_kpss_test
+
+def monte_carlo_size(T, c, n_simulations=1000, c_bar=10, 
+                     nominal_size=0.05, seed=42):
+    """
+    Compute empirical size of Modified and Standard KPSS tests.
+    
+    Parameters
+    ----------
+    T : int
+        Sample size
+    c : float
+        True local-to-unity parameter (c > 0 means H0 is true)
+    n_simulations : int
+        Number of Monte Carlo replications
+    c_bar : float
+        Hypothesized c_bar for the modified test
+    nominal_size : float
+        Nominal significance level
+    seed : int
+        Random seed
+        
+    Returns
+    -------
+    dict
+        Empirical rejection rates
+    """
+    np.random.seed(seed)
+    
+    rejections_mkpss = 0
+    rejections_kpss = 0
+    
+    rho = 1 - c/T
+    
+    for _ in range(n_simulations):
+        # Generate near-integrated process
+        y = np.zeros(T)
+        for t in range(1, T):
+            y[t] = rho * y[t-1] + np.random.normal()
+        
+        # Modified KPSS test
+        result_m = modified_kpss_test(y, c_bar=c_bar, detrend="c", 
+                                       compute_pvalue=False)
+        if result_m.reject_5pct:
+            rejections_mkpss += 1
+        
+        # Standard KPSS test
+        result_s = standard_kpss_test(y, detrend="c")
+        if result_s.statistic > result_s.critical_values[5]:
+            rejections_kpss += 1
+    
+    return {
+        'modified_kpss_size': rejections_mkpss / n_simulations,
+        'standard_kpss_size': rejections_kpss / n_simulations,
+    }
+
+# Run simulation for different c values
+print("="*70)
+print("Monte Carlo Size Comparison (T=200, 1000 simulations)")
+print("="*70)
+print(f"\n{'c':>5} {'Modified KPSS':>18} {'Standard KPSS':>18}")
+print("-" * 45)
+
+for c in [5, 7, 10, 13, 15]:
+    results = monte_carlo_size(T=200, c=c, n_simulations=1000)
+    print(f"{c:>5} {results['modified_kpss_size']:>18.3f} "
+          f"{results['standard_kpss_size']:>18.3f}")
+
+print("\nNote: Nominal size = 0.05")
+print("Standard KPSS shows severe size distortion as c increases.")</code></pre>
+
+                <div class="alert alert-success">
+                    <div class="alert-icon">✅</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Expected Results</div>
+                        The Modified KPSS test should maintain rejection rates close to 5% across all 
+                        values of c (when H₀ is true), while the Standard KPSS will show increasing 
+                        rejection rates as c increases, demonstrating its size distortion problem.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interpretation Guide -->
+            <section id="interpretation" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📋</span>
+                        Interpretation Guide
+                    </h2>
+                    <p>How to interpret and report your results</p>
+                </div>
+
+                <h3>Decision Framework</h3>
+                <div class="interpretation-box">
+                    <div class="interpretation-card reject">
+                        <div class="interpretation-header">
+                            <div class="interpretation-icon">❌</div>
+                            <div class="interpretation-title">Reject H₀</div>
+                        </div>
+                        <ul>
+                            <li>Statistic > Critical Value</li>
+                            <li>P-value < Significance level</li>
+                            <li><strong>Interpretation:</strong> Evidence of unit root</li>
+                            <li>Series is likely I(1)</li>
+                            <li>Consider differencing before modeling</li>
+                        </ul>
+                    </div>
+                    <div class="interpretation-card no-reject">
+                        <div class="interpretation-header">
+                            <div class="interpretation-icon">✓</div>
+                            <div class="interpretation-title">Cannot Reject H₀</div>
+                        </div>
+                        <ul>
+                            <li>Statistic ≤ Critical Value</li>
+                            <li>P-value ≥ Significance level</li>
+                            <li><strong>Interpretation:</strong> Series appears near-integrated/stationary</li>
+                            <li>Series may be I(0) or near I(0)</li>
+                            <li>Can proceed with level analysis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Significance Levels</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Level</th>
+                                <th>Interpretation</th>
+                                <th>When to Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>***</code></td>
+                                <td>1%</td>
+                                <td>Very strong evidence against H₀</td>
+                                <td>High-stakes decisions, strict inference</td>
+                            </tr>
+                            <tr>
+                                <td><code>**</code></td>
+                                <td>5%</td>
+                                <td>Strong evidence against H₀</td>
+                                <td>Standard academic research</td>
+                            </tr>
+                            <tr>
+                                <td><code>*</code></td>
+                                <td>10%</td>
+                                <td>Moderate evidence against H₀</td>
+                                <td>Exploratory analysis, small samples</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Sample Reporting for Publications</h3>
+                <div class="code-header">
+                    <span>LaTeX Example</span>
+                </div>
+                <pre><code class="language-latex">\begin{table}[htbp]
+\centering
+\caption{Modified KPSS Test Results}
+\label{tab:mkpss}
+\begin{tabular}{lcccc}
+\toprule
+Variable & Statistic & CV (5\%) & P-value & Decision \\
+\midrule
+Exchange Rate & 0.5821** & 0.463 & 0.024 & Reject $H_0$ \\
+Inflation & 0.1234 & 0.463 & 0.312 & Cannot Reject \\
+GDP Growth & 0.0987 & 0.463 & 0.456 & Cannot Reject \\
+\bottomrule
+\end{tabular}
+
+\begin{tablenotes}
+\small
+\item Notes: Modified KPSS test (Harris et al., 2007) with $\bar{c}=10$.
+$H_0$: Series is near-integrated (stationary). 
+$H_1$: Series has a unit root.
+**, * denote significance at 5\% and 10\% levels.
+\end{tablenotes}
+\end{table}</code></pre>
+            </section>
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">✨</span>
+                        Best Practices
+                    </h2>
+                    <p>Recommendations for reliable inference</p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>1. Choose c̄ Appropriately</h4>
+                        <p>Use c̄ = 10 as recommended in the paper. This value provides good size control 
+                        while maintaining reasonable power. Higher values are more conservative.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>2. Select Correct Detrending</h4>
+                        <p>Use <code>detrend="c"</code> for level stationarity (no trend in data) and 
+                        <code>detrend="ct"</code> for trend stationarity (visible linear trend).</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>3. Check Sample Size</h4>
+                        <p>The test performs best with T ≥ 100 observations. For smaller samples, 
+                        interpret results with caution and consider bootstrap methods.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>4. Use Multiple Tests</h4>
+                        <p>Combine with other unit root tests (ADF, PP) for robust conclusions. 
+                        Consistent results across tests strengthen your inference.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>5. Handle Missing Data</h4>
+                        <p>Remove or interpolate missing values before testing. The test requires 
+                        a continuous time series without gaps.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>6. Report All Details</h4>
+                        <p>Include c̄, detrending method, kernel, and bandwidth in your reports 
+                        for reproducibility.</p>
+                    </div>
+                </div>
+
+                <h3>Common Pitfalls to Avoid</h3>
+                <div class="alert alert-danger">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <ul style="margin: 0; padding-left: 1.5rem;">
+                            <li>Don't use standard KPSS when near-integration is suspected</li>
+                            <li>Don't ignore structural breaks in the data</li>
+                            <li>Don't test seasonally unadjusted data without proper treatment</li>
+                            <li>Don't rely solely on p-values—consider effect sizes and practical significance</li>
+                            <li>Don't forget to check for outliers that could distort results</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Citation -->
+            <section id="citation" class="section">
+                <div class="section-header">
+                    <h2>
+                        <span class="icon">📚</span>
+                        Citation
+                    </h2>
+                    <p>How to cite this package and the original paper</p>
+                </div>
+
+                <h3>Citing the Package</h3>
+                <div class="code-header">
+                    <span>BibTeX</span>
+                </div>
+                <pre><code>@software{nearkpss,
+  author = {Roudane, Merwan},
+  title = {nearkpss: Modified KPSS Test for Near Integration in Python},
+  year = {2024},
+  url = {https://github.com/merwanroudane/modifiedkpss},
+  version = {1.0.0}
+}</code></pre>
+
+                <h3>Citing the Original Paper</h3>
+                <div class="code-header">
+                    <span>BibTeX</span>
+                </div>
+                <pre><code>@article{harris2007modified,
+  title={Modified KPSS Tests for Near Integration},
+  author={Harris, David and Leybourne, Stephen and McCabe, Brendan},
+  journal={Econometric Theory},
+  volume={23},
+  number={2},
+  pages={355--363},
+  year={2007},
+  publisher={Cambridge University Press},
+  doi={10.1017/S0266466607070156}
+}</code></pre>
+
+                <h3>In-Text Citation Examples</h3>
+                <div class="card">
+                    <p><strong>APA Style:</strong></p>
+                    <p style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        Harris, D., Leybourne, S., & McCabe, B. (2007). Modified KPSS tests for near 
+                        integration. <em>Econometric Theory</em>, 23(2), 355-363.
+                    </p>
+                    
+                    <p style="margin-top: 1rem;"><strong>Chicago Style:</strong></p>
+                    <p style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        Harris, David, Stephen Leybourne, and Brendan McCabe. "Modified KPSS Tests for 
+                        Near Integration." <em>Econometric Theory</em> 23, no. 2 (2007): 355-363.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">nearkpss</div>
+            <div class="footer-links">
+                <a href="https://github.com/merwanroudane/modifiedkpss" target="_blank">GitHub</a>
+                <a href="https://pypi.org/project/nearkpss/" target="_blank">PyPI</a>
+                <a href="mailto:merwanroudane920@gmail.com">Contact</a>
+            </div>
+            <div class="footer-copy">
+                <p>
+                    Created by <strong>Dr. Merwan Roudane</strong> | 
+                    Based on Harris, Leybourne & McCabe (2007) | 
+                    MIT License
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize syntax highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Active sidebar link
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
